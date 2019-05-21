@@ -1,7 +1,7 @@
 -- create schema
-Create Database ClassicExample_1;
+Create Database pc_manufacturer;
 
-USE ClassicExample_1;
+USE pc_manufacturer;
 
 CREATE TABLE Product (
 	Maker      Char(1) 	       NULL,
@@ -38,7 +38,7 @@ CREATE TABLE Printer  (
 	);
 
 -- INSERT VALUES
-USE ClassicExample_1;
+USE pc_manufacturer;
 
 /* Inserting values for Product table */
 Insert into Product values ('A', '1001', 'pc');
