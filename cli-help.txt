@@ -1,0 +1,5 @@
+login as root
+sudo mysql -u root -p
+
+show users
+select user from mysql.user;
