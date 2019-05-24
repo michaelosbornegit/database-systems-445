@@ -20,13 +20,15 @@ GROUP BY StoreNumber;
 
 -- 5. Which department is associated with the highest revenue?
 SELECT Department
-FROM
-(
-	SELECT Department, SUM(OrderTotal) as TotalRevenue
-	FROM ORDER_ITEM, RETAIL_ORDER, SKU_DATA
-	GROUP BY Department
-	ORDER BY TotalRevenue DESC LIMIT 1
-) A;
+FROM RETAIL_ORDER, SKU_DATA
+GROUP BY Department
+HAVING SUM(OrderTotal) = ( 
+    SELECT MIN(Sub.TotalRev) FROM ( 
+        SELECT Department, SUM(OrderTotal) as TotalRev 
+        FROM retail_order, sku_data
+        GROUP BY Department
+    ) A
+);
 
 -- 6. Which department is associated with the lowest revenue?
 SELECT Department
@@ -54,20 +56,51 @@ FROM
 ) A;
 
 -- 8. Find out other warehouses whose average quantity on hand is not smaller than That of Atlanta warehouse.
-SELECT Warehouse, AVGQOH
-FROM 
-(
-	SELECT INVENTORY.Warehouse, AVG(QuantityOnHand) as AVGQOH
-	FROM INVENTORY, WAREHOUSE
-	WHERE Warehouse != "Atlanta" AND AVGQOH > 
-	(
-		SELECT AVGQOH
-		FROM A
-		WHERE Warehouse = "Atlanta"
-	)
-	GROUP BY INVENTORY.Warehouse
-) as A
-;
+SELECT INVENTORY.Warehouse
+FROM WAREHOUSE, INVENTORY
+GROUP BY INVENTORY.Warehouse
+HAVING AVG(QuantityOnHand) >= (
+	SELECT AVG(QuantityOnHand)
+	FROM WAREHOUSE, INVENTORY
+	WHERE INVENTORY.Warehouse = "Atlanta"
+) AND INVENTORY.Warehouse != "Atlanta";
+
+-- 9. List sku’s and descriptions for all products whose sku starts with a "2". Use the BETWEEN operator. You may assume all sku's have 6 digits.
+SELECT SKU, SKU_Description
+FROM SKU_DATA
+WHERE SKU BETWEEN 200000 AND 299999;
+
+-- 10. List the warehouses that currently have on average less than 225 items in stock of the products they carry. Use the HAVING operator.
+SELECT WAREHOUSE
+FROM INVENTORY
+GROUP BY WAREHOUSE
+HAVING AVG(QuantityOnHand) < 225;
+
+-- 11. List all order items for products currently out of stock in Atlanta. Use a subquery.
+SELECT OrderNumber, SKU, Quantity, Price, ExtendedPrice
+FROM ORDER_ITEM
+WHERE SKU IN (
+	SELECT SKU
+	FROM INVENTORY
+	WHERE QuantityOnHand = 0 AND Warehouse = "Atlanta"
+)
+
+-- 12. Get a list of buyers and their departments for any products out of stock (at any warehouse, not all warehouses). Use a join. 
+SELECT Buyer, Department
+FROM INVENTORY
+INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
+WHERE QuantityOnHand = 0
+
+-- 13. Get a list of departments and the total items on order for each department, sorted from largest to smallest quantity. Use a join. 
+SELECT Department, SUM(QuantityOnOrder) as OnOrder
+FROM INVENTORY
+INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
+GROUP BY Department
+ORDER BY OnOrder DESC
+
+
+
+
 
 select * from INVENTORY order by Warehouse
 
