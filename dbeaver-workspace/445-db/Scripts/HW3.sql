@@ -23,9 +23,9 @@ SELECT Department
 FROM RETAIL_ORDER, SKU_DATA
 GROUP BY Department
 HAVING SUM(OrderTotal) = ( 
-    SELECT MIN(Sub.TotalRev) FROM ( 
+    SELECT MIN(TotalRev) FROM ( 
         SELECT Department, SUM(OrderTotal) as TotalRev 
-        FROM retail_order, sku_data
+        FROM RETAIL_ORDER, SKU_DATA
         GROUP BY Department
     ) A
 );
