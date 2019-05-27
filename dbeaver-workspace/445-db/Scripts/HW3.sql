@@ -23,8 +23,8 @@ SELECT Department
 FROM RETAIL_ORDER, SKU_DATA
 GROUP BY Department
 HAVING SUM(OrderTotal) = ( 
-    SELECT MIN(TotalRev) FROM ( 
-        SELECT Department, SUM(OrderTotal) as TotalRev 
+    SELECT MAX(TotalRevenue) FROM ( 
+        SELECT Department, SUM(OrderTotal) as TotalRevenue 
         FROM RETAIL_ORDER, SKU_DATA
         GROUP BY Department
     ) A
@@ -32,13 +32,15 @@ HAVING SUM(OrderTotal) = (
 
 -- 6. Which department is associated with the lowest revenue?
 SELECT Department
-FROM
-(
-	SELECT Department, SUM(OrderTotal) as TotalRevenue
-	FROM ORDER_ITEM, RETAIL_ORDER, SKU_DATA
-	GROUP BY Department
-	ORDER BY TotalRevenue ASC LIMIT 1
-) A;
+FROM RETAIL_ORDER, SKU_DATA
+GROUP BY Department
+HAVING SUM(OrderTotal) = ( 
+    SELECT MIN(TotalRevenue) FROM ( 
+        SELECT Department, SUM(OrderTotal) as TotalRevenue
+        FROM RETAIL_ORDER, SKU_DATA
+        GROUP BY Department
+    ) A
+);
 
 -- checking above answers
 SELECT Department, SUM(OrderTotal)
@@ -47,13 +49,15 @@ GROUP BY Department;
 
 -- 7. Find out the storenumber and zipcode of the store that sold the maximum number of products.
 SELECT StoreNumber, StoreZip
-FROM
-(
-	SELECT StoreNumber, StoreZip, SUM(Quantity) as TotalQuantity
-	FROM ORDER_ITEM, RETAIL_ORDER
-	GROUP BY StoreNumber, StoreZip
-	ORDER BY TotalQuantity DESC LIMIT 1
-) A;
+FROM ORDER_ITEM, RETAIL_ORDER
+GROUP BY StoreNumber, StoreZip
+HAVING SUM(Quantity) = (
+	SELECT MAX(ProductsSold) FROM (
+		SELECT SUM(Quantity) as ProductsSold
+		FROM ORDER_ITEM, RETAIL_ORDER
+		GROUP BY StoreNumber, StoreZip
+	) A
+)
 
 -- 8. Find out other warehouses whose average quantity on hand is not smaller than That of Atlanta warehouse.
 SELECT INVENTORY.Warehouse
@@ -97,33 +101,6 @@ FROM INVENTORY
 INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
 GROUP BY Department
 ORDER BY OnOrder DESC
-
-
-
-
-
-select * from INVENTORY order by Warehouse
-
-
-SELECT * FROM ORDER_ITEM, SKU_DATA, RETAIL_ORDER;
-
-SELECT Department
-FROM
-(
-	SELECT Department, SUM(OrderTotal) as TotalRevenue
-	FROM ORDER_ITEM, RETAIL_ORDER, SKU_DATA
-	GROUP BY Department
-) a GROUP BY Department
-having TotalRevenue = MAX(TotalRevenue);
-
-SELECT Department
-FROM ORDER_ITEM, RETAIL_ORDER, SKU_DATA
-WHERE OrderTotal IN
-(
-		SELECT OrderTotal
-		FROM RETAIL_ORDER
-		GROUP BY StoreNumber
-);
 
 
 
