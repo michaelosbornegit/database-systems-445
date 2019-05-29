@@ -9,9 +9,9 @@ FROM INVENTORY
 GROUP BY Warehouse;
 
 -- 3. Write a SQL statement to show the SKU and SKU_Description for all items stored in a warehouse managed by each manager.
-SELECT Manager, SKU_DATA.SKU, SKU_Description
+SELECT SKU_DATA.SKU, SKU_Description, WAREHOUSE.Warehouse, Manager
 FROM WAREHOUSE, INVENTORY, SKU_DATA
-GROUP BY Manager, SKU_DATA.SKU;
+GROUP BY Manager, SKU_DATA.SKU, Warehouse;
 
 -- 4. Find out the total revenue collected by each store.
 SELECT StoreNumber, SUM(OrderTotal) as TotalRevenue
@@ -57,7 +57,7 @@ HAVING SUM(Quantity) = (
 		FROM ORDER_ITEM, RETAIL_ORDER
 		GROUP BY StoreNumber, StoreZip
 	) A
-)
+);
 
 -- 8. Find out other warehouses whose average quantity on hand is not smaller than That of Atlanta warehouse.
 SELECT INVENTORY.Warehouse
@@ -87,20 +87,82 @@ WHERE SKU IN (
 	SELECT SKU
 	FROM INVENTORY
 	WHERE QuantityOnHand = 0 AND Warehouse = "Atlanta"
-)
+);
 
 -- 12. Get a list of buyers and their departments for any products out of stock (at any warehouse, not all warehouses). Use a join. 
 SELECT Buyer, Department
 FROM INVENTORY
 INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
-WHERE QuantityOnHand = 0
+WHERE QuantityOnHand = 0;
 
 -- 13. Get a list of departments and the total items on order for each department, sorted from largest to smallest quantity. Use a join. 
 SELECT Department, SUM(QuantityOnOrder) as OnOrder
 FROM INVENTORY
 INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
 GROUP BY Department
-ORDER BY OnOrder DESC
+ORDER BY OnOrder DESC;
+
+
+
+-- SWITCHING TO PC MANUF DATABASE
+USE pc_manufacturer;
+
+-- 1. Find the model number and price of all products (of any type) made by maker B.
+-- Relational Algebra: 
+-- (pi Product.model, PC.price 
+-- (sigma Product.maker = "B" 
+-- (Product natural join
+-- (pi model, price (PC) ∪ pi model, price (Laptop) ∪ pi model, price (Printer))
+-- )))
+SELECT Model, Price
+FROM (
+	SELECT Product.Model, Price, Maker
+	FROM Product
+	INNER JOIN PC ON PC.Model = Product.Model
+	UNION
+	SELECT Product.Model, Price, Maker
+	FROM Product
+	INNER JOIN Printer ON Printer.Model = Product.Model
+	UNION
+	SELECT Product.Model, Price, Maker
+	FROM Product
+	INNER JOIN Laptop ON Laptop.Model = Product.Model
+) A
+WHERE Maker = "B";
+
+-- 2. Find those makers that sell laptops, not PCs.
+-- (pi Product.maker 
+-- sigma Product.type='laptop' (Product)) 
+-- - 
+-- (pi Product.maker 
+-- sigma Product.type='pc' (Product))
+SELECT Maker
+FROM Product
+WHERE Maker IN (
+	SELECT Maker
+	FROM Product
+	WHERE `Type` = "laptop"
+	GROUP BY Maker
+) AND Maker NOT IN (
+	SELECT Maker
+	FROM Product
+	WHERE `Type` = "pc"
+	GROUP BY Maker
+)
+GROUP BY Maker;
+
+-- 3. Find those makers of at least two different computers.
+-- 
+SELECT Maker
+FROM (
+	SELECT Maker, COUNT(*) as CNT
+	FROM Product
+	WHERE `Type` = "Laptop" OR `Type` = "pc"
+	GROUP BY Maker
+) A 
+WHERE CNT >= 2;
+
+
 
 
 
