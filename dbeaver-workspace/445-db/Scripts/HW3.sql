@@ -50,11 +50,13 @@ GROUP BY Department;
 -- 7. Find out the storenumber and zipcode of the store that sold the maximum number of products.
 SELECT StoreNumber, StoreZip
 FROM ORDER_ITEM, RETAIL_ORDER
+WHERE ORDER_ITEM.OrderNumber = RETAIL_ORDER.OrderNumber
 GROUP BY StoreNumber, StoreZip
 HAVING SUM(Quantity) = (
 	SELECT MAX(ProductsSold) FROM (
 		SELECT SUM(Quantity) as ProductsSold
 		FROM ORDER_ITEM, RETAIL_ORDER
+		WHERE ORDER_ITEM.OrderNumber = RETAIL_ORDER.OrderNumber
 		GROUP BY StoreNumber, StoreZip
 	) A
 );
@@ -90,7 +92,7 @@ WHERE SKU IN (
 );
 
 -- 12. Get a list of buyers and their departments for any products out of stock (at any warehouse, not all warehouses). Use a join. 
-SELECT Buyer, Department
+SELECT DISTINCT Buyer, Department
 FROM INVENTORY
 INNER JOIN SKU_DATA ON SKU_DATA.SKU = INVENTORY.SKU
 WHERE QuantityOnHand = 0;
@@ -133,7 +135,7 @@ WHERE Maker = "B";
 -- 2. Find those makers that sell laptops, not PCs.
 -- (pi Product.maker 
 -- sigma Product.type='laptop' (Product)) 
--- - 
+-- -
 -- (pi Product.maker 
 -- sigma Product.type='pc' (Product))
 SELECT Maker
