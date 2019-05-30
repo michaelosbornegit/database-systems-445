@@ -43,9 +43,9 @@ HAVING SUM(OrderTotal) = (
 );
 
 -- checking above answers
-SELECT Department, SUM(OrderTotal)
-FROM ORDER_ITEM, SKU_DATA, RETAIL_ORDER
-GROUP BY Department;
+-- SELECT Department, SUM(OrderTotal)
+-- FROM ORDER_ITEM, SKU_DATA, RETAIL_ORDER
+-- GROUP BY Department;
 
 -- 7. Find out the storenumber and zipcode of the store that sold the maximum number of products.
 SELECT StoreNumber, StoreZip

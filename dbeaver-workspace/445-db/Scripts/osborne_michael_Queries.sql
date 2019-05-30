@@ -1,0 +1,68 @@
+-- interesting queries
+
+-- Whats the total spot differential for each racer so far this season?
+SELECT DISTINCT FirstName, LastName, differential
+FROM (
+	SELECT CarID, SUM(FinishPosition-StartPosition) as differential
+	FROM `RESULT`
+	GROUP BY `RESULT`.CarID
+) A, DRIVER_CAR_RELATIONSHIP, DRIVER
+WHERE DRIVER_CAR_RELATIONSHIP.DriverID = DRIVER.DriverID AND A.CarID = DRIVER_CAR_RELATIONSHIP.CarID
+
+-- Whats the point standings by team?
+SELECT TEAM.Name, SUM(points) as Points
+FROM (
+	SELECT CarID, SUM(Points) as points
+	FROM `RESULT`
+	GROUP BY `RESULT`.CarID
+) A, TEAM_CAR_RELATIONSHIP, TEAM
+WHERE TEAM_CAR_RELATIONSHIP.TeamID = TEAM.TeamID AND A.CarID = TEAM_CAR_RELATIONSHIP.CarID
+GROUP BY TEAM.Name
+ORDER BY Points DESC
+
+-- What teams have won a race?
+SELECT TEAM.Name
+FROM `RESULT`, CAR, TEAM, TEAM_CAR_RELATIONSHIP
+WHERE `RESULT`.CarID = CAR.CarID AND TEAM.TeamID = TEAM_CAR_RELATIONSHIP.TeamID 
+	AND TEAM_CAR_RELATIONSHIP.CarID = CAR.CarID AND FinishPosition=1
+	
+-- What is the average finish of each manufacturer?
+SELECT MANUFACTURER.Name, AVG(FinishPosition)
+FROM `RESULT`, CAR, MANUFACTURER_CAR_RELATIONSHIP, MANUFACTURER
+WHERE `RESULT`.CarID = CAR.CarID AND MANUFACTURER.ManufacturerID = MANUFACTURER_CAR_RELATIONSHIP.ManufacturerID
+	AND CAR.CarID = MANUFACTURER_CAR_RELATIONSHIP.CarID
+GROUP BY MANUFACTURER.ManufacturerID
+
+-- Who manufactures Kyle Busch's car?
+SELECT MANUFACTURER.Name
+FROM DRIVER, DRIVER_CAR_RELATIONSHIP, CAR, MANUFACTURER_CAR_RELATIONSHIP, MANUFACTURER
+WHERE FirstName="Kyle" AND LastName="Busch" 
+	AND MANUFACTURER.ManufacturerID = MANUFACTURER_CAR_RELATIONSHIP.ManufacturerID
+	AND CAR.CarID = MANUFACTURER_CAR_RELATIONSHIP.CarID 
+	AND DRIVER_CAR_RELATIONSHIP.DriverID = DRIVER.DriverID 
+	AND CAR.CarID = DRIVER_CAR_RELATIONSHIP.CarID
+	
+-- How many cars are owned by Tony Stewart?
+SELECT CAR_OWNER.Name, COUNT(*) as Cars
+FROM CAR_OWNER, CAR_OWNER_CAR_RELATIONSHIP
+WHERE CAR_OWNER.OwnerID = CAR_OWNER_CAR_RELATIONSHIP.OwnerID
+	AND CAR_OWNER.Name = "Tony Stewart"
+	
+-- How many racers finished the DAYTONA 500?
+SELECT COUNT(*) as NumFinished
+FROM `RESULT`, RACE
+WHERE `RESULT`.RaceID = RACE.RaceID 
+	AND RACE.Name = "DAYTONA 500"
+	AND `RESULT`.FinishStatus = "running"
+
+-- How many top 10 finishes does Martin Truex have?
+SELECT COUNT(*) as NumTopTens
+FROM `RESULT`, CAR, DRIVER, DRIVER_CAR_RELATIONSHIP
+WHERE DRIVER_CAR_RELATIONSHIP.DriverID = DRIVER.DriverID 
+	AND CAR.CarID = DRIVER_CAR_RELATIONSHIP.CarID
+	AND `RESULT`.CarID = CAR.CarID
+	AND FirstName = "Martin"
+	AND LastName = "Truex"
+	AND FinishPosition <= 10
+
+
