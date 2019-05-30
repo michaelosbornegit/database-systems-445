@@ -176,9 +176,103 @@ INSERT INTO TEAM_CAR_RELATIONSHIP VALUES ("876a07ff-ff53-4f23-9528-6d9795270244"
 INSERT INTO TEAM_CAR_RELATIONSHIP VALUES ("e9897fd1-8187-4930-814d-5d05cd43d198", "1dbd3173-2412-48e7-bf44-cca9a72fc127", 2019);
 INSERT INTO TEAM_CAR_RELATIONSHIP VALUES ("e337709c-9fb6-4275-ad89-d9c100e71a1d", "3d0cf0c8-f933-48ac-a935-71f1d18d4bd5", 2019);
 
+INSERT INTO TRACK VALUES ("6ff97f68-2e9d-4fe6-8cd8-2969e1d3570b",
+	"Daytona International Speedway", 
+	"Tri-Oval",
+	2.5,
+	3800,
+	3000,
+	"Florida",
+	"Paved",
+	"Superspeedway",
+	"International Speedway Corp.");
+
+INSERT INTO TRACK VALUES ("75494065-bf21-4039-8d99-b8e438c8b4a4",
+	"Atlanta Motor Speedway", 
+	"Quad-Oval",
+	1.54,
+	2332,
+	1800,
+	"Georgia",
+	"Paved",
+	"Superspeedway",
+	"Speedway Motorsports Inc.");
+
+INSERT INTO TRACK VALUES ("9580816f-e17c-4167-8402-ba16725bcb19",
+	"Las Vegas Motor Speedway", 
+	"D-Shaped Oval",
+	1.5,
+	2275,
+	1572,
+	"Nevada",
+	"Paved",
+	"Superspeedway",
+	"Speedway Motorsports Inc.");
+
+INSERT INTO TRACK VALUES ("5dc82850-ba60-4bd6-8ce3-4e07e8094a83",
+	"ISM Raceway", 
+	"Tri-Oval",
+	1.0,
+	1179,
+	1551,
+	"Arizona",
+	"Paved",
+	"Superspeedway",
+	"International Speedway Corp.");
+
+INSERT INTO TRACK VALUES ("b2bd268a-6ee6-4c6b-a7c6-ac5b1b7b6b0e",
+	"Auto Club Speedway", 
+	"D-Shaped Oval",
+	2.0,
+	3100,
+	2500,
+	"California",
+	"Paved",
+	"Superspeedway",
+	"International Speedway Corp.");
+
+-- CREATE TABLE `RESULT` (
+-- 	CarID CHAR(36) NOT NULL,
+-- 	RaceID CHAR(36) NOT NULL,
+-- 	StartPosition INTEGER NULL,
+-- 	FinishPosition INTEGER NULL,
+-- 	FinishStatus VARCHAR(20) NULL,
+-- 	BestLapSpeed DECIMAL(7,3) NULL,
+-- 	BestLapTime DECIMAL(7,3) NULL,
+-- 	FastestLap DECIMAL(7,3) NULL,
+-- 	Points INTEGER NULL,
+-- 	LapsCompleted INTEGER NULL,
+-- 	CONSTRAINT RESULT_PK PRIMARY KEY (RaceID, CarID),
+-- 	CONSTRAINT RACE_Relationship FOREIGN KEY (RaceID)
+-- 		REFERENCES RACE (RaceID),
+-- 	CONSTRAINT CAR_Relationship3 FOREIGN KEY (CarID)
+-- 		REFERENCES CAR (CarID)
+-- 	);
 
 
+-- CREATE TABLE RACE (
+-- 	RaceID CHAR(36) NOT NULL,
+-- 	TrackID CHAR(36) NOT NULL,
+-- 	Name VARCHAR(40) NOT NULL,
+-- 	StartDateTime DATETIME NULL,
+-- 	ElapsedTime INTEGER NULL,
+-- 	Laps INTEGER NULL,
+-- 	Comments VARCHAR(200) NULL,
+-- 	LeadChanges INTEGER NULL,
+-- 	AverageSpeed DECIMAL(7,3) NULL,
+-- 	VictoryMargin DECIMAL(10,3) NULL,
+-- 	CONSTRAINT TRACK_PK PRIMARY KEY (RaceID),
+-- 	CONSTRAINT TRACK_Relationship FOREIGN KEY (TrackID)
+-- 		REFERENCES TRACK (TrackID)
+-- 	);
 
+INSERT INTO RACE VALUES ("916b9625-c28a-4f59-9980-18ce696542bb",
+"6ff97f68-2e9d-4fe6-8cd8-2969e1d3570b",
+
+);
+
+INSERT INTO RESULT VALUES (""
+);
 
 
 	

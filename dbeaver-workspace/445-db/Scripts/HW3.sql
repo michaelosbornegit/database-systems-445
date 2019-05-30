@@ -154,7 +154,7 @@ WHERE Maker IN (
 GROUP BY Maker;
 
 -- 3. Find those makers of at least two different computers.
--- 
+-- pi maker (sigma count >= 2 (γ Product.maker; count(*)->count (sigma Product.type='laptop' or Product.type='pc' (Product))))
 SELECT Maker
 FROM (
 	SELECT Maker, COUNT(*) as CNT
